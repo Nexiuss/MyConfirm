@@ -113,12 +113,12 @@ public class InnerClass
     public static void main(String[] args) throws IOException {
         InnerClass innerClass = new Builder().param1("1").param2("2").param3("3").build();
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);  //不需要继承序列化类
         //objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         String string = objectMapper.writeValueAsString(innerClass);
         System.out.println(string);
 
-        InnerClass innerClass1 = objectMapper.readValue(string, InnerClass.class);
+        //InnerClass innerClass1 = objectMapper.readValue(string, JSON.class);
 
         System.out.println(innerClass.toString());
     }

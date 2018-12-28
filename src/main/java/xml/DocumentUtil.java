@@ -7,18 +7,24 @@
 package xml;
 
 import org.dom4j.*;
+import xml.search.*;
+import xml.search.Node;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class DocumentUtil
 {
 
-    enum Tree{
+    /**
+     * xml节点类型枚举
+     */
+    enum nodeType{
         Organization,Department,Device,Channel,Alarm,Alarmout
     }
+
+
     /**
-     * xml 转换为document
+     * xml字符串 转换为document
      * @param xml
      * @return
      */
@@ -35,80 +41,246 @@ public class DocumentUtil
         return doc;
     }
 
-    static Element recursionFindByCoding(Element element, String coding)
-    {
-        element.element("");
-        Iterator iterator = element.attributeIterator();
-        String codingCur = null;
 
-        //获取当前department的coding
-        while (iterator.hasNext())
+    /**
+     * 从指定节点开始,递归遍历所有子节点，根据搜索条件，获取对应的节点
+     * @param node
+     * @param searchBean
+     * @return
+     */
+    public  Element getNodes(final Element node, Node searchBean){
+        System.out.println("--------------------");
+
+        //当前节点的名称、文本内容和属性
+        System.out.println("当前节点名称："+node.getName());//当前节点名称
+        System.out.println("当前节点的内容："+node.getTextTrim());//当前节点名称
+        List<Attribute> listAttr=node.attributes();//当前节点的所有属性的list
+        for(Attribute attr:listAttr){//遍历当前节点的所有属性
+            String name=attr.getName();//属性名称
+            String value=attr.getValue();//属性的值
+            System.out.println("属性名称："+name+"属性值："+value);
+        }
+        if(searchBean instanceof Device)
         {
-            Attribute attr = (Attribute) iterator.next();
-            String name = attr.getName();
-            if(! name.equals("coding"))
+            Device deviceSearchBean = (Device) searchBean;
+            Element devices = this.getDevices(node, deviceSearchBean);
+
+            if(devices != null)
             {
-               continue;
+                return devices;
             }
-            String value = attr.getValue();
-            System.out.println(value);
-            codingCur = value;
-            break;
+        }else if(searchBean instanceof  Department)
+        {
+           Department departmentSearchBean = (Department) searchBean;
+            Element deaprtment = getDeaprtment(node, departmentSearchBean);
+
+            if(deaprtment != null)
+            {
+                return deaprtment;
+            }
         }
 
-
-        if(codingCur.equals(coding.substring(0, codingCur.length())))
-        {
-            Element nodeSuper;
-
-            nodeSuper = element;
-
-            if(codingCur.equals(coding))
+        //递归遍历当前节点所有的子节点
+        List<Element> listElement=node.elements();//所有一级子节点的list
+        for(Element e:listElement){//遍历所有一级子节点
+            Element nodes = this.getNodes(e, searchBean);//递归
+            if(nodes != null)
             {
-                return element;
-            }
-            List department = nodeSuper.elements("Department");
-
-            Iterator departments = department.iterator();
-
-            Element codingNode = null;
-
-            while (departments.hasNext())
-            {
-                Element next = (Element) departments.next();
-
-                Element recursionByCoding = recursionFindByCoding(next, coding);
-                if(recursionByCoding != null)
-                {
-                    return recursionByCoding;
-                }
-
+                return nodes;
             }
 
-            return codingNode;
-
         }
-        else
-        {
-            return null;
-        }
+        return null;
     }
 
-    static Element recursionRemoveByCoding(Element element, String coding)
+    private Element getDevices(final Element node, Device deviceSearchBean)
     {
-        Element elementBycoding = recursionFindByCoding(element, coding);
-        if(elementBycoding != null)
+        String nodeName = node.getName();
+        if(nodeType.Device == nodeType.valueOf(nodeName))
         {
-            elementBycoding.getParent().remove(elementBycoding);
+            List<Attribute> listAttr=node.attributes();//当前节点的所有属性的list
+            for(Attribute attr:listAttr){//遍历当前节点的所有属性
+                String name=attr.getName();//属性名称
+                String value=attr.getValue();//属性的值
+                if(name != null && name.equals("id")){
+                    if(value != null && value.equals(deviceSearchBean.getId()))
+                    {
+                        return node;
+                    }
+                }
+            }
         }
-        Element root = elementBycoding;
 
-        while (root.getParent() != null)
-        {
-            root = root.getParent();
+        return null;
+    }
+
+    /**
+     * 获取组织结构
+     * @param node
+     * @param departmentSearchBean
+     * @return
+     */
+    private Element getDeaprtment(final Element node, Department departmentSearchBean) {
+        String nodeName = node.getName();
+        if (nodeType.Department == nodeType.valueOf(nodeName)) {
+            List<Attribute> listAttr = node.attributes();//当前节点的所有属性的list
+            for (Attribute attr : listAttr) {//
+                String name = attr.getName();//属性名称遍历当前节点的所有属性
+                String value = attr.getValue();//属性的值
+                if (name != null && name.equals("coding")) {
+                    if (value != null && value.equals(departmentSearchBean.getCoding())) {
+                        return node;
+                    }
+                }
+            }
         }
+        return null;
+    }
 
-        return root;
+    /**
+     * 添加组织结构
+     * @param node
+     * @param addedDepartment
+     * @return
+     */
+    public Element addDepartment(final Element node, Department addedDepartment)
+    {
+        String coding = addedDepartment.getCoding();
+        String parentCoding = coding.substring(0, coding.length()-2);
+        Element pointNode = this.getNodes(node, Node.departmentSearchBeanByCoding(parentCoding));
+        Element nodeDepartment = pointNode.addElement("Department");
+        nodeDepartment.addAttribute("coding",addedDepartment.getCoding());
+        nodeDepartment.addAttribute("domainId",addedDepartment.getDomainId());
+        nodeDepartment.addAttribute("id",addedDepartment.getId());
+        nodeDepartment.addAttribute("name",addedDepartment.getName());
+        Element currentNode = nodeDepartment.addAttribute("type", addedDepartment.getType());
+
+        return currentNode;
+    }
+
+    /**
+     * 修改组织结构
+     * @param node
+     * @param updatedDepartment
+     * @return
+     */
+    public Element updateDepartment(final Element node, Department updatedDepartment)
+    {
+        String coding = updatedDepartment.getCoding();
+        Element pointNode = this.getNodes(node, Node.departmentSearchBeanByCoding(coding));
+        Attribute name = pointNode.attribute("name");
+        name.setValue(updatedDepartment.getName());
+
+        return node;
+    }
+
+    /**
+     * 添加设备节点，包括设备节点下面的通道，报警输入，报警输出
+     * @param node
+     * @param addedDevice
+     * @return
+     */
+    public Element addDevice(final Element node, Device addedDevice)
+    {
+        String coding = addedDevice.getCoding();
+        Element pointNode = this.getNodes(node, Node.departmentSearchBeanByCoding(coding));
+        Element nodeDevice = pointNode.addElement(nodeType.Device.toString());
+        this.addNodeDeviceAttr(nodeDevice, addedDevice);
+        this.addChannel(nodeDevice, addedDevice.getChannel());
+        this.addAlert(nodeDevice, addedDevice.getAlarm());
+        this.addAlertout(nodeDevice, addedDevice.getAlarmout());
+
+        return node;
+    }
+
+    public Element updateDevice(final Element node, Device updatedDevice)
+    {
+        String deviceId = updatedDevice.getId();
+        Element pointDeviceNode = this.getNodes(node, Node.deviceSearchBean(deviceId));
+        this.updateDeviceAttr(pointDeviceNode, updatedDevice);
+
+        return pointDeviceNode;
+    }
+
+    /**
+     * 修改设备的属性值
+     * @param pointDeviceNode
+     * @param updatedDevice
+     */
+    private void updateDeviceAttr(Element pointDeviceNode, Device updatedDevice) {
+        pointDeviceNode.attribute("ip").setValue(updatedDevice.getIp());
+        pointDeviceNode.attribute("manufacturer").setValue(updatedDevice.getManufacturer());
+        pointDeviceNode.attribute("password").setValue(updatedDevice.getPassword());
+        pointDeviceNode.attribute("port").setValue(updatedDevice.getPort());
+        pointDeviceNode.attribute("rights").setValue(updatedDevice.getRights());
+        pointDeviceNode.attribute("title").setValue(updatedDevice.getTitle());
+        pointDeviceNode.attribute("coding").setValue(updatedDevice.getCoding());
+        pointDeviceNode.attribute("user").setValue(updatedDevice.getUser());
+        pointDeviceNode.attribute("visible").setValue(updatedDevice.getVisible());
+    }
+
+    /**
+     * 为设备节点添加报警输出
+     * @param nodeDevice
+     * @param alarmout
+     */
+    private void addAlertout(Element nodeDevice, Alarmout alarmout) {
+        Element nodeAlertout = nodeDevice.addElement(nodeType.Alarmout.toString());
+        nodeAlertout.addAttribute("alertdev", alarmout.getAlertdev());
+        nodeAlertout.addAttribute("alerttype", alarmout.getAlerttype());
+        nodeAlertout.addAttribute("num", alarmout.getNum());
+        nodeAlertout.addAttribute("title", alarmout.getTitle());
+    }
+
+    /**
+     * 为设备节点添加报警输入。
+     * @param nodeDevice
+     * @param alarm
+     */
+    private void addAlert(final Element nodeDevice, Alarm alarm) {
+        Element nodeAlert = nodeDevice.addElement(nodeType.Alarm.toString());
+        nodeAlert.addAttribute("alertgrade", alarm.getAlertgrade());
+        nodeAlert.addAttribute("alerttype", alarm.getAlerttype());
+        nodeAlert.addAttribute("num", alarm.getNum());
+        nodeAlert.addAttribute("title", alarm.getTitle());
+    }
+
+    /**
+     * 为设备节点添加通道
+     * @param nodeDevice
+     * @param channel
+     */
+    private void addChannel(final Element nodeDevice, Channel channel) {
+        Element nodeChannel = nodeDevice.addElement(nodeType.Channel.toString());
+        nodeChannel.addAttribute("camera",channel.getCamera());
+        nodeChannel.addAttribute("id",channel.getId());
+        nodeChannel.addAttribute("num",channel.getNum());
+        nodeChannel.addAttribute("title",channel.getTitle());
+        nodeChannel.addAttribute("type",channel.getTitle());
+    }
+
+    /**
+     * 为设备节点添加属性
+     * @param nodeDevice
+     * @param addedDevice
+     */
+    private void addNodeDeviceAttr(final Element nodeDevice, Device addedDevice) {
+        nodeDevice.addAttribute("alert", addedDevice.getAlert());
+        nodeDevice.addAttribute("alertout", addedDevice.getAlertout());
+        nodeDevice.addAttribute("channel", addedDevice.getChannelno());
+        nodeDevice.addAttribute("coding", addedDevice.getCoding());
+        nodeDevice.addAttribute("domainId", addedDevice.getDomainId());
+        nodeDevice.addAttribute("id", addedDevice.getId());
+        nodeDevice.addAttribute("ip", addedDevice.getIp());
+        nodeDevice.addAttribute("manufacturer", addedDevice.getManufacturer());
+        nodeDevice.addAttribute("password", addedDevice.getPassword());
+        nodeDevice.addAttribute("port", addedDevice.getPort());
+        nodeDevice.addAttribute("rights", addedDevice.getRights());
+        nodeDevice.addAttribute("title", addedDevice.getTitle());
+        nodeDevice.addAttribute("type", addedDevice.getType());
+        nodeDevice.addAttribute("typeid", addedDevice.getTypeid());
+        nodeDevice.addAttribute("user", addedDevice.getUser());
+        nodeDevice.addAttribute("visible", addedDevice.getVisible());
     }
 
 
@@ -3270,34 +3442,23 @@ public class DocumentUtil
 
 
         Document document = cover2Document(stringBuilder.toString());
+
         Element rootElement = document.getRootElement();
-        System.out.println(rootElement.getName());
 
-        Element elementByCoding = recursionFindByCoding(document.getRootElement().element(Tree.Department.toString()), "1001009010");
-        if(elementByCoding != null)
-        {
-            String name = elementByCoding.getName();
-            System.out.println(name);
-            String s = elementByCoding.asXML();
-            System.out.println(s);
-        }
-        else
-        {
-            System.out.println("null");
-        }
+        DocumentUtil documentUtil = new DocumentUtil();
+        Element pointNode = documentUtil.getNodes(rootElement, Node.departmentSearchBeanByCoding("1001001002"));
+        Element parent = pointNode.getParent();
+        boolean remove = parent.remove(pointNode);
+        String s = rootElement.asXML();
+        Element deviceNode = documentUtil.getNodes(rootElement, Node.deviceSearchBean("1100001000146"));
+        Element deviceParentNode = deviceNode.getParent();
+        boolean remove1 = deviceParentNode.remove(deviceNode);
+        System.out.println(rootElement.asXML());
 
-        Element recursionRemoveByCoding = recursionRemoveByCoding(document.getRootElement(), "1001009010");
-        if(recursionRemoveByCoding != null)
-        {
-            String name = recursionRemoveByCoding.getName();
-            System.out.println(name);
-            String s = recursionRemoveByCoding.asXML();
-            System.out.println("after remove" + s);
-        }
-        else
-        {
-            System.out.println("null");
-        }
-
+        Department department = new Department();
+        department.setCoding("1001009008");
+        department.setName("changeName");
+        documentUtil.updateDepartment(rootElement, department);
+        System.out.println(rootElement.asXML());
     }
 }

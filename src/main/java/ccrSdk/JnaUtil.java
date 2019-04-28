@@ -183,7 +183,7 @@ public class JnaUtil {
         }
         manufacture = manufacture.replaceAll("\\.", "_");
         boolean hasAuth = false;
-        for(ManufactureTypeEnum manufactureTypeEnum : Constants.MAUNFACTURE_LIST)
+        for(ManufactureTypeEnum manufactureTypeEnum : bytes.Constants.MAUNFACTURE_LIST)
         {
             if(manufactureTypeEnum.toString().equals(manufacture))
             {

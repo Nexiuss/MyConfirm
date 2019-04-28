@@ -41,68 +41,7 @@ public class LockContainer {
         this.lockMap.remove(key);
     }
 
-    public void doSth(String key) {
-//        Lock lock = null;
-//        lock = lockMap.get(key);
-//        if (lock == null) {
-//            lock = new ReentrantLock();
-//            lock.lock();
-//            lockMap.put(key, lock);
-//        }
-//        try {
-//            System.out.println(Thread.currentThread() + " || key:" + key);
-//            this.wait(1000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } finally {
-//            lock.unlock();
-//            lockMap.remove(key);
-//        }
-        try {
-            Thread.sleep(5000);
-            System.out.println(Thread.currentThread().getName() + " || key" + key + " || time "+ System.currentTimeMillis()) ;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public static void main(String[] args) {
-        LockContainer lockContainer = new LockContainer();
 
 
-        new Thread(() -> {
-            Lock lock = lockContainer.getLock("1111111");
-            lockContainer.doSth("1111111");
-            lock.unlock();
 
-        }, "tread-1").start();
-        new Thread(() -> {
-            Lock lock = lockContainer.getLock("1111111");
-            lockContainer.doSth("1111111");
-            lock.unlock();
-        }, "tread-2").start();
-        new Thread(() -> {
-            Lock lock = lockContainer.getLock("1111111");
-            lockContainer.doSth("1111111");
-            lock.unlock();
-        }, "tread-3").start();
-        new Thread(() -> {
-            Lock lock = lockContainer.getLock("1111111");
-            lockContainer.doSth("1111111");
-            lock.unlock();
-        }, "tread-4").start();
-        new Thread(() -> {
-            Lock lock = lockContainer.getLock("1111111");
-            lockContainer.doSth("1111111");
-            lock.unlock();
-        }, "tread-5");
-        new Thread(() -> {
-            Lock lock = lockContainer.getLock("22222");
-            lockContainer.doSth("22222");
-            lock.unlock();
-        }, "tread-6").start();
-
-
-    }
 }

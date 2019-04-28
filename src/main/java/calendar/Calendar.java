@@ -6,12 +6,18 @@
  */
 package calendar;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Calendar
 {
 
     public static void main(String[] args) {
         java.util.Calendar calendar = java.util.Calendar.getInstance();
-        int i = calendar.get(6);
+        calendar.setTime(new Date());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+        System.out.println(dateFormat.format(new Date()));
+        int i = calendar.get(7);
         System.out.println(i);
     }
 

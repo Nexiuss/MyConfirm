@@ -41,9 +41,12 @@ public class BytesUtils {
 
     public static void main(String[] args) throws UnsupportedEncodingException {
 
-        byte[] bytes1 = hex2Bytes(Constants.OrgXML);
-        String gbk1 = new String(bytes1, "GBK");
-        System.out.println(gbk1);
+//        byte[] bytes1 = hex2Bytes(Constants.OrgXML);
+//        String gbk1 = new String(bytes1, "GBK");
+        byte[] bytes = hex2Bytes(Constants.casstr);
+        String gbk2 = new String(bytes, "GBK");
+        System.out.println(gbk2);
+
 
     }
 }

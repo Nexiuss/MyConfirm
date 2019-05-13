@@ -43,8 +43,14 @@ public class ListTest {
         String[] objects = list.toArray(new String[list.size()]);
         System.out.println(objects);
 
-
-        String user = doPrivileged(() -> System.getProperty("user.name"));
+        Integer[] arr=new Integer[]{7,5,2};
+       /* ArrayLooper arrayLooper=new ArrayLooper(arr);
+        arrayLooper.handle(new Callback() {
+            @Override
+            public void callback(Integer num) {
+                System.out.println(num);
+            }
+        });*/
 
     }
 }

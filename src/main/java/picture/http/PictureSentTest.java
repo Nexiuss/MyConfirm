@@ -6,6 +6,8 @@
  */
 package picture.http;
 
+import bytes.BytesUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,6 +26,10 @@ public class PictureSentTest {
             sb.append(read);
         }
         is.close();
+
+        byte[] bytes = BytesUtils.hex2Bytes("6e616d653d22e7bb84e7bb87e7bb93e69e84726f6f742220");
+        String s = new String(bytes,"GBK");
+        System.out.println(s);
 
 
         System.out.println(sb.toString());

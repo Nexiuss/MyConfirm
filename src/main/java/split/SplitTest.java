@@ -12,5 +12,12 @@ public class SplitTest {
 
         String[] $s = str.split("\\$");
         System.out.println($s);
+
+
+        String s = "112212.1121_1213.jgp";
+
+        String[] split = s.split("\\.");
+        System.out.println(split[split.length-1]);
+
     }
 }

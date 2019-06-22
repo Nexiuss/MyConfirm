@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ListTest {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         List<String> list = new ArrayList<>();
         list.add("A");
@@ -51,6 +51,20 @@ public class ListTest {
                 System.out.println(num);
             }
         });*/
+
+
+        ArrayList<String> strings = new ArrayList<>();
+        strings.addAll(list);
+
+        list.remove(2);
+        System.out.println(strings);
+
+        while (true){
+
+            int random = (Math.random() > 0.5 ? 1:0);
+            Thread.sleep(1000);
+            System.out.println(random);
+        }
 
     }
 }

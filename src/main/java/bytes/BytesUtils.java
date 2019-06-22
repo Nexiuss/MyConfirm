@@ -43,9 +43,15 @@ public class BytesUtils {
 
 //        byte[] bytes1 = hex2Bytes(Constants.OrgXML);
 //        String gbk1 = new String(bytes1, "GBK");
-        byte[] bytes = hex2Bytes(Constants.casstr);
+        /*byte[] bytes = hex2Bytes(Constants.casstr);
         String gbk2 = new String(bytes, "GBK");
-        System.out.println(gbk2);
+        System.out.println(gbk2);*/
+
+        String  str = "\r\n";
+        System.out.println(str);
+        byte[] bytes = str.getBytes("utf-8");
+        String s = bytes2Hex(bytes);
+        System.out.println(s);
 
 
     }

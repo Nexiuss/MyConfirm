@@ -5,14 +5,9 @@
  * Description:
  */
 package lombok;
-@Getter
-@Setter
-@ToString
+
 public class LombokTest {
     TestBean testBean = new TestBean();
-    @Getter
-    @Setter
-    @ToString
     class TestBean{
 
         private String string;
@@ -23,7 +18,6 @@ public class LombokTest {
 
     public static void main(String[] args) {
         LombokTest lombokTest = new LombokTest();
-        TestBean testBean = lombokTest.getTestBean();
         
     }
 }

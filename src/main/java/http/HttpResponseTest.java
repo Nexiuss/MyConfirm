@@ -7,6 +7,8 @@
 package http;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
@@ -22,28 +24,28 @@ import org.apache.http.message.BasicHttpResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpResponseTest
 {
-    public static void main(String[] args) throws URISyntaxException {
+    public static void main(String[] args) throws URISyntaxException, JsonProcessingException {
         HttpResponse response= new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
 
 
         URI uri = new URIBuilder()
                 .setScheme("http")
                 .setHost("172.18.31.15")
-                .setPort(18080)
-                .setPath("/search")
-                .setParameter("q", "httpclient")
-                .setParameter("btnG", "Google Search")
-                .setParameter("aq", "f")
-                .setParameter("oq", "")
+                .setPort(18082)
+                .setPath("/picture")
                 .build();
-        HttpGet httpget = new HttpGet(uri);
-        httpget.addHeader("date_param", "wewewwwwwwwwwwwwwwwwwwwwwwww");
+
         HttpPost httpPost = new HttpPost(uri);
-        httpPost.addHeader("date_param", "wewewwwwwwwwwwwwwwwwwwwwwwww");
-        StringEntity myEntity = new StringEntity("{1,2,3}", ContentType.create("application/json", "UTF-8"));
+        Map map = new HashMap();
+        map.put("picUrl", new String[]{"http://172.18.31.15:18080/virtualFilePath/ims/1562209554777.jpg"});
+        ObjectMapper objectMapper = new ObjectMapper();
+        String body = objectMapper.writeValueAsString(map);
+        StringEntity myEntity = new StringEntity(body, ContentType.create("application/json", "UTF-8"));
         httpPost.setEntity(myEntity);
         CloseableHttpResponse execute = null;
         try {

@@ -188,7 +188,9 @@ public class OkHttpClientTest {
             Sensor ensorsSend = sensorArr.get(type-1);
             /*String detail = "[[{\"id\": 1,\"name\": \"airTemp\",\"value\": \"0.7197718353544218\",\"unit\": \"°C\"},{\"id\": 2,\"name\": \"airHumidity\",\"value\": \"50.0688\",\"unit\": \"%\"},{\"id\": 3,\"name\": \"light\",\"value\": \"286.7156\",\"unit\": \"LUX\"},{\"id\": 4,\"name\": \"CO2\",\"value\": \"405.000\",\"unit\": \"ppm\"},{\"id\": 5,\"name\": \"noise\",\"value\": \"30.0\",\"unit\": \"db\"},{\"id\": 6,\"name\": \"soilHumidity \",\"value\": \"49.9938\",\"unit\": \"%\"},{\"id\": 7,\"name\": \"windDirection\",\"value\": \"1\",\"unit\": \"\"},{\"id\": 8,\"name\": \"windSpeed\",\"value\": \"3.40\",\"unit\": \"m/s\"}]]";
 */
-            String detail = JSON.toJSONString(ensorsSend);
+            HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+            stringObjectHashMap.put("sensors", new Sensor[]{ensorsSend});
+            String detail = JSON.toJSONString(stringObjectHashMap );
             AlertInfoBean weather = new AlertInfoBean.Builder()
                     .alarmseq(UUID.randomUUID().toString())
                     .alarmtime(format3)

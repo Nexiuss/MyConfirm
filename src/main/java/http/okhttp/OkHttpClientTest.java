@@ -26,9 +26,9 @@ public class OkHttpClientTest {
 
     private static int seq = 0;
 
-    static final SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd%HH:mm:ss");
-    static final SimpleDateFormat df2 = new SimpleDateFormat("yyyyMMdd_HHmmss");
-    static final SimpleDateFormat df3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd%HH:mm:ss");
+    public static final SimpleDateFormat df2 = new SimpleDateFormat("yyyyMMdd_HHmmss");
+    public static final SimpleDateFormat df3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 
     static LinkedBlockingQueue<Map> queue = new LinkedBlockingQueue();
@@ -71,50 +71,7 @@ public class OkHttpClientTest {
             return "1";
         };
 
-        // ================picture-licence=========================>>
 
-        Function<String,String> functionLicencePic = (string) -> {
-            Map map = null;
-            try {
-                map = queue.take();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            String uuid = ((String) map.get("uuid"));
-            String deviceid = ((String) map.get("deviceid"));
-            String detail = (String) map.get("detail");
-            JSONObject jsonObject = JSON.parseObject(detail, JSONObject.class);
-            String detailjson = jsonObject.getString("detailjson");
-            List<Map> maps = JSON.parseArray(detailjson, Map.class);
-            String completedLicense = (String) maps.get(0).get("CompletedLicense");
-            String cropPicName = (String) maps.get(0).get("CropPicName");
-
-
-
-            File licensPic = new File("D:\\tmp\\licence/" + completedLicense + ".jpg");
-            byte[] fileToByteLicence = getFileToByte(licensPic);
-            SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd%HH:mm:ss");
-            SimpleDateFormat df2 = new SimpleDateFormat("yyyyMMdd_HHmmss");
-            SimpleDateFormat df3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String format = df3.format(new Date());
-            Request request = new Request.Builder()
-                    .url("http://"+string+":18082/picture/upload/byte?deviceid="+deviceid+"&channelid=1&alarmseq=" + uuid + "&datetime="+format+"&name="+cropPicName+"&type=card")
-                    .header("Content-Type", "application/octet-stream")
-                    .addHeader("Accept", "*/*")
-                    .post(RequestBody.create(MediaType.parse("application/octet-stream"), fileToByteLicence))
-                    .build();
-
-
-            Response response = null;
-            try {
-                response = client.newCall(request).execute();
-                boolean successful = response.isSuccessful();
-                logger.info("response.isSuccessful():" + String.valueOf(successful));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return "1";
-        };
 
 
         // ================picture-licence=========================<<
@@ -223,45 +180,7 @@ public class OkHttpClientTest {
 
 
         // =============license==========>>
-        Function<String, String> functionLicense = (string)->{
-            String uuid = UUID.randomUUID().toString();
-            String detail = getDetail("card");
-            int randomInt = ((int) (Math.random() * 6));
-            String deviceid = deviceids[randomInt];
-            AlertInfoBean carLicense = new AlertInfoBean.Builder()
-                    .alarmseq(uuid)
-                    .alarmtime(df3.format(new Date()))
-                    .type("card")
-                    .channelid(1)
-                    .deviceid(deviceid)
-                    .state(Math.random() > 0.5 ? 1 : 0)
-                    .detail(detail).build();
 
-            Map map = new HashMap();
-            map.put("uuid", uuid);
-            map.put("detail", detail);
-            map.put("deviceid", deviceid);
-            map.put("channelid", 1);
-            queue.offer(map);
-            String s = JSON.toJSONString(carLicense);
-            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), s);
-            Request request = new Request.Builder()
-                    .url("http://"+string+":18102/api/v1/ams2.0/smart_alarm")
-                    .addHeader("Accept", "*/*")
-                    .post(requestBody)
-                    .build();
-
-            System.out.println("请求参数为》"+s);
-            Response response = null;
-            try {
-                response = client.newCall(request).execute();
-                boolean successful = response.isSuccessful();
-                logger.info("response.isSuccessful():" + String.valueOf(successful));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return "1";
-        };
 
 
         // <<========== license ==============
@@ -270,9 +189,7 @@ public class OkHttpClientTest {
         String s2 = "127.0.0.1";
         Runnable runnable = ()->{
             while (true){
-                //functionLicense.apply(s);
-                functionWeather.apply(s);
-               // functionLicencePic.apply(s);
+
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException e) {
@@ -290,79 +207,11 @@ public class OkHttpClientTest {
 
     }
 
-    static final String[] license= new String[]{
-            "川A88888","赣AQ7182","赣D00009","冀E59437",
-            "辽H9987E","鲁PI5396","浙B999AA","浙C5S250"
-    };
-
-    public enum Province{
-        京(11000,"京"),津(12000,"津"),冀(13000,"冀"),晋(14000,"晋"),蒙(15000,"蒙"),辽(21000,"辽"),吉(22000,"吉"),
-        黑(23000,"黑"),沪(31000,"沪"),苏(32000,"苏"),浙(33000,"浙"),皖(34000,"皖"),闽(35000,"闽"),赣(36000,"赣"),
-        鲁(37000,"鲁"),豫(41000,"豫"),鄂(42000,"鄂"),湘(43000,"湘"),粤(44000,"粤"),桂(45000,"桂"),琼(46000,"琼"),
-        渝(50000,"渝"),川(51000,"川"),贵(52000,"贵"),云(53000,"云"),藏(54000,"藏"),陕(61000,"陕"),甘(62000,"甘"),
-        青(63000,"青"),宁(64000,"宁"),新(65000,"新"),台(71000,"台"),港(81000,"港"),澳(82000,"澳");
-
-        private Integer code;
-        private String province;
-
-        public Integer getCode() {
-            return code;
-        }
-
-        Province(Integer code, String province) {
-            this.code = code;
-            this.province = province;
-        }
-
-        public void setCode(Integer code) {
-            this.code = code;
-        }
-
-        public String getProvince() {
-            return province;
-        }
-
-        public void setProvince(String province) {
-            this.province = province;
-        }
-    }
-
-    private static String getDetail(String type) {
-        String restr = "";
-        switch (type){
-            case "card":{
-
-                Map map2 = new HashMap();
-                double random = Math.random();
-                int rd5 = (int) (random * 5);
-                int rd2 = (Math.random() > 0.5 ? 1:0);
-                String license = OkHttpClientTest.license[rd5];
-                String provinceStr = license.substring(0,1);
-                Province province = Province.valueOf(provinceStr);
-                license = license.substring(1,license.length());
-                Integer code = Province.valueOf(provinceStr).code;
-
-                map2.put("License", license);
-                map2.put("Type", 1);
-                map2.put("Province", code);
-                map2.put("ParkingIndex", rd2);
-                map2.put("CompletedLicense", province.getProvince() + license);
-                map2.put("CropPicName", "card_s_1_"+new Date().getTime()/1000 + ".jpg");
-                List list = new ArrayList();
-                list.add(map2);
-                Map mapDetailJson = new HashMap();
-                mapDetailJson.put("detailjson", list);
-
-                restr = JSON.toJSONString(mapDetailJson);
 
 
 
-            }break;
-            default:break;
-        }
 
-        return restr;
-    }
+
 
 
     /**

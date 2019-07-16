@@ -10,11 +10,15 @@ import java.util.Date;
 
 public class tmp {
     public static void main(String[] args) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String format1 = dateFormat.format(new Date(1550112857000L));
-        String format2 = dateFormat.format(new Date(43200000L));
-        String format3 = dateFormat.format(new Date(8640000));
-        String format4 = dateFormat.format(new Date(0L));
-        System.out.println(format1+ " ||" + format2 + "||" + format3 + "|| " + format4);
+      String s = "card_b_devId55000010000F4276_ch0001_20190709_20170.jpg";
+        int i = s.hashCode();
+        System.out.println(1);
+
     }
+    interface  alarm{};
+
+    class AlarmAms implements alarm{};
+    class AlarmPicture implements alarm{};
+
 }
+

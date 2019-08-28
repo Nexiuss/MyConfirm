@@ -5,20 +5,16 @@
  * Description:
  */
 
-public class test
-{
-    public static void main(String[] args) {
-        int x =0;
-        for(int i =1; ;i++)
-        {
+public class test {
 
-            x = x+3;
-            if(x >= 10)
-            {
-                System.out.println(i);
-                break;
-            }
-            x = x-2;
-        }
+
+
+    public static void main(String[] args) {
+        final String s = "111111111111111111$111";
+        final boolean contains = s.contains("$");
+        final String[] $s = s.split("\\$");
+        System.out.println($s);
+
     }
+
 }

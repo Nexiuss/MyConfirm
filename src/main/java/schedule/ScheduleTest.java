@@ -18,15 +18,21 @@ public class ScheduleTest {
         return format.format(new Date());
     }
     public static void main(String[] args) {
-        ScheduledExecutorService pool = Executors.newScheduledThreadPool(10);
 
-        MyRunnable runnable1 = new MyRunnable("Thread" + 1);
-        MyRunnable runnable2 = new MyRunnable("Thread" + 2);
-
-        System.out.println("main start time" + now());
-        pool.schedule(runnable1, 1, TimeUnit.DAYS);
-
-        pool.schedule(runnable2,7,TimeUnit.SECONDS);
+        ScheduleThreadPoolManager.getInstance().scheduleAtFixedRate(new MyRunnable("1"), 0, 30, TimeUnit.SECONDS);
+        ScheduleThreadPoolManager.getInstance().scheduleAtFixedRate(new MyRunnable("2"), 0, 30, TimeUnit.SECONDS);
+        ScheduleThreadPoolManager.getInstance().scheduleAtFixedRate(new MyRunnable("3"), 0, 30, TimeUnit.SECONDS);
+        ScheduleThreadPoolManager.getInstance().scheduleAtFixedRate(new MyRunnable("4"), 0, 30, TimeUnit.SECONDS);
+        ScheduleThreadPoolManager.getInstance().scheduleAtFixedRate(new MyRunnable("5"), 0, 30, TimeUnit.SECONDS);
+        ScheduleThreadPoolManager.getInstance().scheduleAtFixedRate(new MyRunnable("6"), 0, 30, TimeUnit.SECONDS);
+        ScheduleThreadPoolManager.getInstance().scheduleAtFixedRate(new MyRunnable("7"), 0, 30, TimeUnit.SECONDS);
+        ScheduleThreadPoolManager.getInstance().scheduleAtFixedRate(new MyRunnable("8"), 0, 30, TimeUnit.SECONDS);
+        ScheduleThreadPoolManager.getInstance().scheduleAtFixedRate(new MyRunnable("9"), 0, 30, TimeUnit.SECONDS);
+        ScheduleThreadPoolManager.getInstance().scheduleAtFixedRate(new MyRunnable("10"), 0, 30, TimeUnit.SECONDS);
+        ScheduleThreadPoolManager.getInstance().scheduleAtFixedRate(new MyRunnable("11"), 0, 30, TimeUnit.SECONDS);
+        ScheduleThreadPoolManager.getInstance().scheduleAtFixedRate(new MyRunnable("12"), 0, 30, TimeUnit.SECONDS);
+        ScheduleThreadPoolManager.getInstance().scheduleAtFixedRate(new MyRunnable("13"), 0, 30, TimeUnit.SECONDS);
+        ScheduleThreadPoolManager.getInstance().scheduleAtFixedRate(new MyRunnable("14"), 0, 30, TimeUnit.SECONDS);
     }
 
 

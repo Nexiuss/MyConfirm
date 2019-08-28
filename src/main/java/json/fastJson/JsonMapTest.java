@@ -4,9 +4,10 @@
  * Date:     2018/11/13 17:37
  * Description:
  */
-package json;
+package json.fastJson;
 
 import com.alibaba.fastjson.JSON;
+import json.CameraBean;
 
 import java.util.ArrayList;
 import java.util.HashMap;

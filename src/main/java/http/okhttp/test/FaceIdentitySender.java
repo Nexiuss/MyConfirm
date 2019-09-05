@@ -11,6 +11,7 @@ import com.squareup.okhttp.*;
 import pojo.PictureInfoBean;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -23,7 +24,7 @@ public abstract class FaceIdentitySender {
         client.setReadTimeout(10, TimeUnit.SECONDS);
     }
 
-    protected final static String ip = "172.18.31.15";
+    protected static String ip = "172.18.31.15";
     protected static Logger logger = Logger.getLogger(FaceIdentitySender.class.getName());
 
     protected void sendPicture(SendData.Total total){
@@ -108,5 +109,4 @@ public abstract class FaceIdentitySender {
         }
         return by;
     }
-
 }

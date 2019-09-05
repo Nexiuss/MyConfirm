@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.UUID;
 
 public class SendData {
-    private final static int channelid = 1;
+    public static int channelid = 1;
     public static String deviceid = "33010610000F4246";
     public static final String pictureDfStr = "yyyyMMdd_HHmmss";
     public static final String dfStrCommon = "yyyy-MM-dd HH:mm:ss";

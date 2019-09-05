@@ -56,9 +56,10 @@ public class BytesUtils {
         imageOutput.close();
         System.out.println("Make Picture success,Please find image in " + path);*/
 
-        final byte[] bytes = hex2Bytes(Constants.test);
+        final byte[] bytes = hex2Bytes(Constants.gxStr);
         final String gbk = new String(bytes, "GBK");
         System.out.println(gbk);
+
 
 
     }
